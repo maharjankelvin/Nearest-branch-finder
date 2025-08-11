@@ -31,8 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $image_url = 'assets/images/' . $newName;
                         }
                     }
-                } else if (!empty($_POST['image_url'])) {
-                    $image_url = sanitizeInput($_POST['image_url']);
                 }
                 $stmt = executeQuery(
                     "INSERT INTO menu_items (name, description, price, category, image_url) VALUES (?, ?, ?, ?, ?)",
@@ -66,8 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $image_url = 'assets/images/' . $newName;
                         }
                     }
-                } else if (!empty($_POST['image_url'])) {
-                    $image_url = sanitizeInput($_POST['image_url']);
                 }
                 $status = sanitizeInput($_POST['status']);
                 
@@ -132,10 +128,7 @@ include '../includes/header.php';
                     </div>
                     <div class="form-group">
                         <label for="image_file">Image Upload:</label>
-                        <input type="file" id="image_file" name="image_file" accept="image/*">
-                        <br>
-                        <label for="image_url">Or Image URL:</label>
-                        <input type="url" id="image_url" name="image_url">
+                        <input type="file" id="image_file" name="image_file" accept="image/*" required>
                     </div>
                 </div>
                 <div class="form-group">
@@ -218,9 +211,6 @@ include '../includes/header.php';
             <div class="form-group">
                 <label for="editImageFile">Image Upload:</label>
                 <input type="file" id="editImageFile" name="image_file" accept="image/*">
-                <br>
-                <label for="editImageUrl">Or Image URL:</label>
-                <input type="url" id="editImageUrl" name="image_url">
             </div>
             <div class="form-group">
                 <label for="editDescription">Description:</label>
@@ -245,7 +235,6 @@ function editItem(item) {
     document.getElementById('editName').value = item.name;
     document.getElementById('editCategory').value = item.category;
     document.getElementById('editPrice').value = item.price;
-    document.getElementById('editImageUrl').value = item.image_url || '';
     document.getElementById('editDescription').value = item.description || '';
     document.getElementById('editStatus').value = item.status;
     document.getElementById('editModal').style.display = 'block';

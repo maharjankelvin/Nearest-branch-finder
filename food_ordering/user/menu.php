@@ -39,8 +39,8 @@ include '../includes/header.php';
                 <div class="menu-grid">
                     <?php foreach ($items as $item): ?>
                         <div class="menu-item">
-                            <?php if ($item['image_url']): ?>
-                                <img src="<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" onerror="this.style.display='none'">
+                            <?php if (!empty($item['image_url'])): ?>
+                                <img src="../<?php echo htmlspecialchars($item['image_url']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" style="width:100%;height:200px;object-fit:cover;" onerror="this.style.display='none'">
                             <?php else: ?>
                                 <div style="height: 200px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 3rem;">
                                     🍽️
