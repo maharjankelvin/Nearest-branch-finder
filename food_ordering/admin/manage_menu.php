@@ -17,8 +17,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $description = sanitizeInput($_POST['description']);
                 $price = floatval($_POST['price']);
                 $category = sanitizeInput($_POST['category']);
-                $image_url = sanitizeInput($_POST['image_url']);
-                
+                $image_url = '';
+                if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
+                    $uploadDir = '../assets/images/';
+                    $fileTmp = $_FILES['image_file']['tmp_name'];
+                    $fileName = basename($_FILES['image_file']['name']);
+                    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                    $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                    if (in_array($fileExt, $allowed)) {
+                        $newName = uniqid('menu_', true) . '.' . $fileExt;
+                        $destPath = $uploadDir . $newName;
+                        if (move_uploaded_file($fileTmp, $destPath)) {
+                            $image_url = 'assets/images/' . $newName;
+                        }
+                    }
+                } else if (!empty($_POST['image_url'])) {
+                    $image_url = sanitizeInput($_POST['image_url']);
+                }
                 $stmt = executeQuery(
                     "INSERT INTO menu_items (name, description, price, category, image_url) VALUES (?, ?, ?, ?, ?)",
                     [$name, $description, $price, $category, $image_url]
@@ -37,7 +52,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $description = sanitizeInput($_POST['description']);
                 $price = floatval($_POST['price']);
                 $category = sanitizeInput($_POST['category']);
-                $image_url = sanitizeInput($_POST['image_url']);
+                $image_url = '';
+                if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
+                    $uploadDir = '../assets/images/';
+                    $fileTmp = $_FILES['image_file']['tmp_name'];
+                    $fileName = basename($_FILES['image_file']['name']);
+                    $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+                    $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                    if (in_array($fileExt, $allowed)) {
+                        $newName = uniqid('menu_', true) . '.' . $fileExt;
+                        $destPath = $uploadDir . $newName;
+                        if (move_uploaded_file($fileTmp, $destPath)) {
+                            $image_url = 'assets/images/' . $newName;
+                        }
+                    }
+                } else if (!empty($_POST['image_url'])) {
+                    $image_url = sanitizeInput($_POST['image_url']);
+                }
                 $status = sanitizeInput($_POST['status']);
                 
                 $stmt = executeQuery(
@@ -84,7 +115,7 @@ include '../includes/header.php';
             <h2>Add New Menu Item</h2>
         </div>
         <div class="card-body">
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="add">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-group">
@@ -100,7 +131,10 @@ include '../includes/header.php';
                         <input type="number" id="price" name="price" step="0.01" min="0" required>
                     </div>
                     <div class="form-group">
-                        <label for="image_url">Image URL:</label>
+                        <label for="image_file">Image Upload:</label>
+                        <input type="file" id="image_file" name="image_file" accept="image/*">
+                        <br>
+                        <label for="image_url">Or Image URL:</label>
                         <input type="url" id="image_url" name="image_url">
                     </div>
                 </div>
@@ -166,7 +200,7 @@ include '../includes/header.php';
 <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 500px;">
         <h3>Edit Menu Item</h3>
-        <form method="POST" id="editForm">
+        <form method="POST" id="editForm" enctype="multipart/form-data">
             <input type="hidden" name="action" value="edit">
             <input type="hidden" name="id" id="editId">
             <div class="form-group">
@@ -182,7 +216,10 @@ include '../includes/header.php';
                 <input type="number" id="editPrice" name="price" step="0.01" min="0" required>
             </div>
             <div class="form-group">
-                <label for="editImageUrl">Image URL:</label>
+                <label for="editImageFile">Image Upload:</label>
+                <input type="file" id="editImageFile" name="image_file" accept="image/*">
+                <br>
+                <label for="editImageUrl">Or Image URL:</label>
                 <input type="url" id="editImageUrl" name="image_url">
             </div>
             <div class="form-group">
